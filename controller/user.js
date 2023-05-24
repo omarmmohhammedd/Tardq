@@ -102,7 +102,7 @@ exports.confirmPayment = asyncHandler(async (req, res, next) => {
                     amount,
                     At: new Date(new Date(succesPayment.create_time).getTime() + 1 * 60 * 1000 * 180),
                     payment_id: paymentId
-                }).then(() => res.send('Payment successful'))
+                }).then(() => res.status(200).send('Payment successful'))
             }
         });
     })
