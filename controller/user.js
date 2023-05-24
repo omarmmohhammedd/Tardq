@@ -48,7 +48,6 @@ exports.pay = asyncHandler(async (req, res, next) => {
         if (!match) return next(new ApiError("Passwod Not Match", 400))
     })
     await Rules.findOne({ payment_type: "paypal", active: true }).then((payment) => {
-        console.log(payment)
         if (!payment) return next(new ApiError("PayPal Payment Not Found", 404))
         paypal.configure({
             mode: payment.mode,
@@ -76,7 +75,7 @@ exports.pay = asyncHandler(async (req, res, next) => {
         }
         paypal.payment.create(paymentData, (err, payment) => {
             if (err) return next(new ApiError(err.message, err.statusCode))
-            const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
+            const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href
             res.json({ approvalUrl })
         })
     })
