@@ -53,8 +53,9 @@ app.get("/success", (req, res, next) => {
         "payer_id": payerId,
     };
     paypal.payment.execute(paymentId, executePaymentData, async (error, payment) => {
+        console.log(error)
         if (error) {
-            console.error(error);
+            console.log(error);
             res.status(500).send('Payment execution failed');
         } else {
             const paymentModel = require("./model/Payments")

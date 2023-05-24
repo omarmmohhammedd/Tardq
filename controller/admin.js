@@ -68,7 +68,7 @@ exports.addRule = asyncHandler(async (req, res, next) => {
                 }
             }).catch(err => {
                 console.log(err.message)
-                res.status(401).send('Invalid PayPal Credentials.')
+                return next(new ApiError(err.message, 401))
             })
         }
     }
