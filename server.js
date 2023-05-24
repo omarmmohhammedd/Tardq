@@ -11,7 +11,7 @@ const server = require("http").createServer(app)
 const io = require("socket.io")(server)
 
 app.use(cors())
-app.use(process.env.NODE_ENV !== "production" && require("morgan")("dev"))
+process.env.NODE_ENV !== "production" && app.use( require("morgan")("dev"))
 app.use(express.static(path.join(__dirname, "images")));
 app.use(express.json())
 app.get("/", (req, res, next) => res.send("Main Page For Tardq Api Server"))
