@@ -9,15 +9,15 @@ const verifyToken = require("./middlewares/verifyToken")
 const paypal = require("paypal-rest-sdk")
 const server = require("http").createServer(app)
 const io = require("socket.io")(server)
-
+const verifyRoles = require("./middlewares/verifyRoles")
 app.use(cors())
 process.env.NODE_ENV !== "production" && app.use( require("morgan")("dev"))
-app.use(express.static(path.join(__dirname, "images")));
+app.use("/images",express.static(path.join(__dirname, "images")));
 app.use(express.json())
 app.get("/", (req, res, next) => res.send("Main Page For Tardq Api Server"))
 app.use("/auth", require("./routes/auth"))
 app.use("/user", verifyToken, require("./routes/user"))
-app.use("/admin", require("./routes/admin"))
+app.use("/admin", verifyRoles("admin"),require("./routes/admin"))
 
 let userSockets = new Map()
 io.on("connection", async (socket) => {
