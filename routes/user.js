@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { makeOrder, getOrders, getDelivery, makeDelivery, get_rules, pay, makePayment, getAllMessages } = require("../controller/user")
+const { makeOrder, getOrders, getDelivery, makeDelivery, get_rules, pay, makePayment, getAllMessages, confirmPayment } = require("../controller/user")
 const imgUploader = require("../middlewares/imgUploader.js")
 const { makeOrderValidation, makeDeliveryValidation, payValidator, makePaymentValidator } = require("../utils/user.js")
 
@@ -12,7 +12,7 @@ router.get("/delivery", getDelivery)
 router.get("/rules", get_rules)
 router.post("/pay", payValidator,pay)
 router.post("/payment", makePaymentValidator, makePayment)
-
+router.post("/confirmPayment", confirmPayment)
 // router.post("/message/:to", sendMessage)
 router.get("/message", getAllMessages)
 

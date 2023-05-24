@@ -75,11 +75,40 @@ exports.pay = asyncHandler(async (req, res, next) => {
         }
         paypal.payment.create(paymentData, (err, payment) => {
             if (err) return next(new ApiError(err.message, err.statusCode))
-            const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href
+            const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
             res.json({ approvalUrl })
         })
     })
 })
+
+exports.confirmPayment = asyncHandler(async (req, res, next) => {
+    const { paymentId, payerId, amount } = req.body
+    const { id } = req.user
+    await Rules.findOne({ payment_type: "paypal", active: true }).then((payment) => {
+        paypal.configure({
+            mode: payment.mode,
+            client_id: payment.clientId,
+            client_secret: payment.clientSecert
+        })
+        paypal.payment.execute(paymentId, { "payer_id": payerId, }, async (error, succesPayment) => {
+            if (error) {
+                console.log(error);
+                res.status(500).send('Payment execution failed');
+            } else {
+                const paymentModel = require("../model/Payments")
+                await paymentModel.create({
+                    user: id,
+                    payment_type: "paypal",
+                    amount,
+                    At: new Date(new Date(succesPayment.create_time).getTime() + 1 * 60 * 1000 * 180),
+                    payment_id: paymentId
+                }).then(() => res.send('Payment successful'))
+            }
+        });
+    })
+   
+})
+
 
 exports.makePayment = asyncHandler(async (req, res, next) => {
     const { id } = req.user

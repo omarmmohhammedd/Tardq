@@ -66,7 +66,6 @@ app.get("/success", (req, res, next) => {
                 At: new Date(new Date(payment.create_time).getTime() + 1 * 60 * 1000 * 180),
                 payment_id: paymentId
             }).then(() => res.send('Payment successful'))
-
         }
     });
 })
