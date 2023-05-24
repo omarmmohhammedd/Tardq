@@ -46,29 +46,6 @@ io.on("connection", async (socket) => {
     })
 })
 
-app.get("/success", (req, res, next) => {
-    const paymentId = req.query.paymentId;
-    const payerId = req.query.PayerID;
-    const executePaymentData = {
-        "payer_id": payerId,
-    };
-    paypal.payment.execute(paymentId, executePaymentData, async (error, payment) => {
-        console.log(error)
-        if (error) {
-            console.log(error);
-            res.status(500).send('Payment execution failed');
-        } else {
-            const paymentModel = require("./model/Payments")
-            await paymentModel.create({
-                user: "646b85e590b3957a08591435",
-                payment_type: "paypal",
-                amount: "1.00",
-                At: new Date(new Date(payment.create_time).getTime() + 1 * 60 * 1000 * 180),
-                payment_id: paymentId
-            }).then(() => res.send('Payment successful'))
-        }
-    });
-})
 app.get("/cancel", (req, res) => res.send("cancled"))
 
 app.use(require("./middlewares/globalError"))
