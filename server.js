@@ -69,7 +69,6 @@ app.get("/success", (req, res, next) => {
 
         }
     });
-
 })
 app.get("/cancel", (req, res) => res.send("cancled"))
 
