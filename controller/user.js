@@ -123,7 +123,7 @@ exports.getAllMessages = asyncHandler(async (req, res, next) => {
     let strictUsers = []
     messages.map((message) => {
         const dealedUser = message.from.equals(id) ? message.to : message.from
-        if (!strictUsers.includes(dealedUser.username)) {
+        if (!strictUsers.includes(dealedUser.phone)) {
             let userId = dealedUser.id
             const conversation = {[userId]: messages.filter(con => con.from.equals(dealedUser) || con.to.equals(dealedUser)).sort((a, b) => {
                     const dateA = new Date(a.createdAt);
@@ -131,7 +131,7 @@ exports.getAllMessages = asyncHandler(async (req, res, next) => {
                     return dateA - dateB;
                 })
             }
-            strictUsers.push(dealedUser.username)
+            strictUsers.push(dealedUser.phone)
             allConversations.push(conversation)
         }
     })
