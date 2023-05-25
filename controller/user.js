@@ -112,7 +112,7 @@ exports.confirmPayment = asyncHandler(async (req, res, next) => {
             }
         });
     })
-   
+
 })
 
 // Get All Messages To User
@@ -124,14 +124,15 @@ exports.getAllMessages = asyncHandler(async (req, res, next) => {
     messages.map((message) => {
         const dealedUser = message.from.equals(id) ? message.to : message.from
         if (!strictUsers.includes(dealedUser.username)) {
-            const conversation = messages.filter(con => con.from.equals(dealedUser) || con.to.equals(dealedUser))
+            let userId = dealedUser.id
+            const conversation = {[userId]: messages.filter(con => con.from.equals(dealedUser) || con.to.equals(dealedUser)).sort((a, b) => {
+                    const dateA = new Date(a.createdAt);
+                    const dateB = new Date(b.createdAt);
+                    return dateA - dateB;
+                })
+            }
             strictUsers.push(dealedUser.username)
-            allConversations.push(conversation.sort((a, b) => {
-                const dateA = new Date(a.createdAt);
-                const dateB = new Date(b.createdAt);
-                return dateA - dateB;
-            })
-            )
+            allConversations.push(conversation)
         }
     })
     res.json({ allConversations });
