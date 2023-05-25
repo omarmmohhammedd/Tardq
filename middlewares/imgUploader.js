@@ -1,6 +1,7 @@
 const multer = require("multer")
 const fs = require('fs')
 
+// Setup Multer Instance
 module.exports = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {

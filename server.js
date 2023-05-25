@@ -4,21 +4,30 @@ const cors = require("cors")
 const path = require("path")
 require("dotenv").config()
 const PORT = process.env.PORT || 8080
-const mongoose = require("mongoose")
-const verifyToken = require("./middlewares/verifyToken")
-const paypal = require("paypal-rest-sdk")
 const server = require("http").createServer(app)
-const io = require("socket.io")(server)
+const io = require("socket.io")(server,({cors:{origin:"*"}}))
+const compression = require("compression")
+const helmet = require("helmet")
+const verifyToken = require("./middlewares/verifyToken")
 const verifyRoles = require("./middlewares/verifyRoles")
+const DB = require("./config/DB.config")
+
+// Middlewares
 app.use(cors())
-process.env.NODE_ENV !== "production" && app.use( require("morgan")("dev"))
-app.use("/images",express.static(path.join(__dirname, "images")));
 app.use(express.json())
+app.use(compression())
+app.use(helmet())
+app.use("/images",express.static(path.join(__dirname, "images")));
+process.env.NODE_ENV !== "production" && app.use(require("morgan")("dev"))
+
+// Routes
 app.get("/", (req, res, next) => res.send("Main Page For Tardq Api Server"))
 app.use("/auth", require("./routes/auth"))
 app.use("/user", verifyToken, require("./routes/user"))
 app.use("/admin", verifyRoles("admin"),require("./routes/admin"))
+app.use("*", (req, res) => res.status(404).send("Page Not Found"))
 
+// implementation Of Socket Server
 let userSockets = new Map()
 io.on("connection", async (socket) => {
     console.log('New client connected');
@@ -46,18 +55,13 @@ io.on("connection", async (socket) => {
     })
 })
 
-app.get("/cancel", (req, res) => res.send("cancled"))
-
+// Errro Handler Middleware
 app.use(require("./middlewares/globalError"))
 
-
-app.use("*", (req, res) => res.status(404).send("Page Not Found"))
-mongoose.set({ strictPopulate: false })
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true }).then((con) => {
+// Connecting To Database And Start Server
+DB().then((con) => {
     server.listen(PORT, () => {
         console.log(`listen on port ${PORT} And Connect To DB ${con.connection.host}`)
     })
 }).catch((err) => console.log(err))
 
-
-module.exports = { io, userSockets }

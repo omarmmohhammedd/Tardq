@@ -6,9 +6,10 @@ const ApiError = require("../utils/apiError")
 const Delivery = require("../model/Delivery")
 const Rules = require("../model/Rules")
 const User = require("../model/User")
-const Payment = require("../model/Payments")
 const Message = require("../model/Messages")
-const mongoose = require("mongoose")
+
+
+// Client Make Eviction
 exports.makeOrder = asyncHandler(async (req, res, next) => {
     const { eviction_name, username, source_location, dis_location, price, arrival_time, type_eviction, phone, eviction_size } = req.body
     const { id } = req.user
@@ -17,12 +18,14 @@ exports.makeOrder = asyncHandler(async (req, res, next) => {
         .then((order) => res.status(201).json({ order })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 
+// All Evictions
 exports.getOrders = asyncHandler(async (req, res, next) => {
     res.json({
         orders: await eviction.find({}).populate({ path: "user", select: "phone username" })
     })
 })
 
+// Client Make Delivery
 exports.makeDelivery = asyncHandler(async (req, res, next) => {
     const { id } = req.user
     const { username, source_location, dis_location, price, eviction_size, phone } = req.body
@@ -30,19 +33,21 @@ exports.makeDelivery = asyncHandler(async (req, res, next) => {
         .then((delivery) => res.status(201).json({ delivery })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 
+// Get All Deliveries
 exports.getDelivery = asyncHandler(async (req, res, next) => {
     res.json({ delivery: await Delivery.find({}).populate({ path: "user", "select": "username email phone" }) })
 })
 
+// Get All Rules
 exports.get_rules = asyncHandler(async (req, res, next) => {
     await Rules.find({}).then((rules) => res.json({ rules }))
 })
 
+// User Pay Commission
 exports.pay = asyncHandler(async (req, res, next) => {
-    const { amount } = req.body
+    const { amount, password } = req.body
     const { id } = req.user
-    const { password } = req.body
-    if (!password || !amount) return next(new ApiError("All Feilds Are Required", 400))
+
     await User.findById(id).then(async user => {
         const match = await bcrypt.compare(password, user.password)
         if (!match) return next(new ApiError("Passwod Not Match", 400))
@@ -81,6 +86,7 @@ exports.pay = asyncHandler(async (req, res, next) => {
     })
 })
 
+// User Confirm Payment
 exports.confirmPayment = asyncHandler(async (req, res, next) => {
     const { paymentId, payerId, amount } = req.body
     const { id } = req.user
@@ -109,31 +115,7 @@ exports.confirmPayment = asyncHandler(async (req, res, next) => {
    
 })
 
-
-exports.makePayment = asyncHandler(async (req, res, next) => {
-    const { id } = req.user
-    const { amount, payment_id, At, payment_type } = req.body
-    await Payment.create({
-        user: id,
-        amount,
-        payment_id,
-        At: new Date(new Date(At).getTime() + 1 * 60 * 1000 * 180),
-        payment_type
-    }).then(payment => res.status(201).json({ payment }))
-})
-
-// exports.sendMessage = asyncHandler(async (req, res, next) => {
-//     const { id } = req.user
-//     const { to } = req.params
-//     const { message } = req.body
-//     await Message.create({
-//         from: id,
-//         to,
-//         message,
-//         createdAt: new Date(Date.now() + 1 * 60 * 1000 * 180)
-//     }).then(() => res.sendStatus(200))
-// })
-
+// Get All Messages To User
 exports.getAllMessages = asyncHandler(async (req, res, next) => {
     const { id } = req.user
     const messages = await Message.find({ $or: [{ from: id }, { to: id }] }).populate({ path: "from to ", select: "username email phone" })
@@ -155,4 +137,3 @@ exports.getAllMessages = asyncHandler(async (req, res, next) => {
     res.json({ allConversations });
 });
 
-// .populate({ path: "from to ", select: "username email phone" })

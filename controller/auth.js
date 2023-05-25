@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 
 
-
+// User Login 
 exports.Login = asyncHandler(async (req, res, next) => {
     const { phone, password } = req.body
     await User.findOne({ phone }).then(async user => {
@@ -18,6 +18,7 @@ exports.Login = asyncHandler(async (req, res, next) => {
     })
 })
 
+// New User Register
 exports.Register = asyncHandler(async (req, res, next) => {
     const { username, phone, email, home_location, password } = req.body
     await User.findOne({ phone }).then(async user => {

@@ -5,14 +5,8 @@ const Delivery = require("../model/Delivery")
 const Rules = require("../model/Rules")
 const axios = require("axios");
 const ApiError = require('../utils/apiError');
-exports.getAllEvictions = asyncHandler(async (req, res, next) => {
-    await Eviction.find({}).then(evictions => res.json({ evictions }))
-})
 
-exports.getAllDelivery = asyncHandler(async (req, res, next) => {
-    await Delivery.find({}).then(deliveries => res.json({ deliveries }))
-})
-
+// Add Rule
 exports.addRule = asyncHandler(async (req, res, next) => {
     const { type } = req.query
     if (type === "uses" || type === "privacy") {
@@ -75,6 +69,7 @@ exports.addRule = asyncHandler(async (req, res, next) => {
 }
 )
 
+// Payment Activate With Paypal
 exports.activePayment = asyncHandler(async (req, res, next) => {
     const { payment_id } = req.params
     await Rules.findById(payment_id).then(async payment => {
