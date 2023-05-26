@@ -81,8 +81,8 @@ exports.addRule = asyncHandler(async (req, res, next) => {
         const { IBAN } = req.body
         if (!IBAN) return next(new ApiError("IBAN Required", 400))
         await Rules.findOne({ type }).then(async (rule) => {
-            if (rule) await Rules.findOneAndUpdate({ type }, { IBAN }).then((Bank) => res.json(Bank))
-            else await Rules.create({ IBAN, type }).then((Bank) => res.json(Bank))
+            if (rule) await Rules.findOneAndUpdate({ type }, { IBAN }).then(Bank => res.json({Bank}))
+            else await Rules.create({ IBAN, type }).then(Bank => res.json({Bank}))
         })
         
     }

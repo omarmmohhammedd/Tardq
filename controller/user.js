@@ -8,7 +8,7 @@ const Rules = require("../model/Rules")
 const User = require("../model/User")
 const Message = require("../model/Messages")
 const cloudinary = require("cloudinary").v2
-
+const paymentModel = require("../model/Payments")
 
 // Cloudinay Config Adapt
 
@@ -54,37 +54,37 @@ exports.pay = asyncHandler(async (req, res, next) => {
     await User.findById(id).then(async user => {
         const match = await bcrypt.compare(password, user.password)
         if (!match) return next(new ApiError("Passwod Not Match", 400))
-    })
-    await Rules.findOne({ payment_type: "paypal", active: true }).then((payment) => {
-        if (!payment) return next(new ApiError("PayPal Payment Not Found", 404))
-        paypal.configure({
-            mode: payment.mode,
-            client_id: payment.clientId,
-            client_secret: payment.clientSecert
-        })
-        const paymentData = {
-            intent: 'sale',
-            payer: {
-                payment_method: 'paypal'
-            },
-            redirect_urls: {
-                return_url: process.env.REDIRECT_URL_SUCCESS,
-                cancel_url: process.env.REDIRECT_URL_CANCEL
-            },
-            transactions: [
-                {
-                    amount: {
-                        total: `${amount}`,
-                        currency: 'USD'
-                    },
-                    description: 'Commission'
-                }
-            ]
-        }
-        paypal.payment.create(paymentData, (err, payment) => {
-            if (err) return next(new ApiError(err.message, err.statusCode))
-            const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
-            res.json({ approvalUrl })
+        await Rules.findOne({ payment_type: "paypal", active: true }).then((payment) => {
+            if (!payment) return next(new ApiError("PayPal Payment Not Found", 404))
+            paypal.configure({
+                mode: payment.mode,
+                client_id: payment.clientId,
+                client_secret: payment.clientSecert
+            })
+            const paymentData = {
+                intent: 'sale',
+                payer: {
+                    payment_method: 'paypal'
+                },
+                redirect_urls: {
+                    return_url: process.env.REDIRECT_URL_SUCCESS,
+                    cancel_url: process.env.REDIRECT_URL_CANCEL
+                },
+                transactions: [
+                    {
+                        amount: {
+                            total: `${amount}`,
+                            currency: 'USD'
+                        },
+                        description: 'Commission'
+                    }
+                ]
+            }
+            paypal.payment.create(paymentData, (err, payment) => {
+                if (err) return next(new ApiError(err.message, err.statusCode))
+                const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
+                res.json({ approvalUrl })
+            })
         })
     })
 })
@@ -103,16 +103,8 @@ exports.confirmPayment = asyncHandler(async (req, res, next) => {
             if (error) {
                 console.log(error);
                 res.status(500).send('Payment execution failed');
-            } else {
-                const paymentModel = require("../model/Payments")
-                await paymentModel.create({
-                    user: id,
-                    payment_type: "paypal",
-                    amount,
-                    At: new Date(new Date(succesPayment.create_time).getTime() + 1 * 60 * 1000 * 180),
-                    payment_id: paymentId
-                }).then(() => res.status(200).send('Payment successful'))
-            }
+            } else await paymentModel.create({ user: id, payment_type: "paypal", amount, At: new Date(new Date(succesPayment.create_time).getTime() + 1 * 60 * 1000 * 180), payment_id: paymentId }).then(() => res.status(200).send('Payment successful'))
+
         });
     })
 
@@ -128,7 +120,8 @@ exports.getAllMessages = asyncHandler(async (req, res, next) => {
         const dealedUser = message.from.equals(id) ? message.to : message.from
         if (!strictUsers.includes(dealedUser.phone)) {
             let userId = dealedUser.id
-            const conversation = {[userId]: messages.filter(con => con.from.equals(dealedUser) || con.to.equals(dealedUser)).sort((a, b) => {
+            const conversation = {
+                [userId]: messages.filter(con => con.from.equals(dealedUser) || con.to.equals(dealedUser)).sort((a, b) => {
                     const dateA = new Date(a.createdAt);
                     const dateB = new Date(b.createdAt);
                     return dateA - dateB;
