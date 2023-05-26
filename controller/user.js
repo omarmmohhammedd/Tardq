@@ -18,24 +18,12 @@ exports.makeOrder = asyncHandler(async (req, res, next) => {
         .then((order) => res.status(201).json({ order })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 
-// All Evictions
-exports.getOrders = asyncHandler(async (req, res, next) => {
-    res.json({
-        orders: await eviction.find({}).populate({ path: "user", select: "phone username" })
-    })
-})
-
 // Client Make Delivery
 exports.makeDelivery = asyncHandler(async (req, res, next) => {
     const { id } = req.user
     const { username, source_location, dis_location, price, eviction_size, phone } = req.body
     await Delivery.create({ user: id, username, source_location, dis_location, price, phone, eviction_size })
         .then((delivery) => res.status(201).json({ delivery })).catch((error) => next(new ApiError(error.message, error.statusCode)))
-})
-
-// Get All Deliveries
-exports.getDelivery = asyncHandler(async (req, res, next) => {
-    res.json({ delivery: await Delivery.find({}).populate({ path: "user", "select": "username email phone" }) })
 })
 
 // Get All Rules

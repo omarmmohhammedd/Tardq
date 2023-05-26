@@ -35,3 +35,18 @@ exports.Register = asyncHandler(async (req, res, next) => {
         })
     })
 })
+
+
+// All Evictions And Deliveries
+
+// All Evictions
+exports.getOrders = asyncHandler(async (req, res, next) => {
+    res.json({
+        orders: await eviction.find({}).populate({ path: "user", select: "phone username" })
+    })
+})
+
+// Get All Deliveries
+exports.getDelivery = asyncHandler(async (req, res, next) => {
+    res.json({ delivery: await Delivery.find({}).populate({ path: "user", "select": "username email phone" }) })
+})
