@@ -28,7 +28,7 @@ module.exports = mongoose.model("Eviction", new mongoose.Schema({
     price: {
         type: Number,
         required: [true, "Please enter a price for this eviction"],
-        min:10
+        min:1
     },
     arrival_time: {
         type: String,

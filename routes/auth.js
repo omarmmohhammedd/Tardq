@@ -1,6 +1,7 @@
 const router = require("express").Router()
-
-const { Login, Register, getDelivery, getOrders } = require("../controller/auth")
+const { check } = require("express-validator")
+const validator = require("../middlewares/validatormiddelware.js")
+const { Login, Register, getDelivery, getOrders, searchEviction } = require("../controller/auth")
 const { LoginValidator, RegisterValidator } = require("../utils/auth")
 
 // User Login
@@ -11,4 +12,7 @@ router.post("/register", RegisterValidator, Register)
 router.get("/delivery", getDelivery)
 // Get All Orders
 router.get("/order", getOrders)
+
+router.get("/search", [check("search").notEmpty().withMessage("Please Add Search Input"), validator], searchEviction)
+
 module.exports = router

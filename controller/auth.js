@@ -15,7 +15,7 @@ exports.Login = asyncHandler(async (req, res, next) => {
         const match = await bcrypt.compare(password, user.password)
         if (!match) return next(new ApiError("Password Not Match", 400))
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.TOKEN, { expiresIn: "30d" })
-        res.json({user,token})
+        res.json({ user, token })
     })
 })
 
@@ -29,10 +29,10 @@ exports.Register = asyncHandler(async (req, res, next) => {
             home_location,
             email,
             username,
-            password:await bcrypt.hash(password,10)
-        }).then((user)=>{
+            password: await bcrypt.hash(password, 10)
+        }).then((user) => {
             delete user._doc.password && delete user.__v
-            res.status(201).json({user})
+            res.status(201).json({ user })
         })
     })
 })
@@ -50,4 +50,15 @@ exports.getOrders = asyncHandler(async (req, res, next) => {
 // Get All Deliveries
 exports.getDelivery = asyncHandler(async (req, res, next) => {
     res.json({ delivery: await Delivery.find({}).populate({ path: "user", "select": "username email phone" }) })
+})
+
+exports.searchEviction = asyncHandler(async (req, res, next) => {
+    const { search } = req.query // User input for searching
+    await eviction.find()
+        .or([
+            { eviction_name: { $regex: search, $options: 'i' } }, // Search by eviction_name
+            { phone: { $regex: search, $options: 'i' } }, // Search source phone
+            { dis_location: { $regex: search, $options: 'i' } }, // Search by dis location
+            { source_location: { $regex: search, $options: 'i' } }
+        ]).then((evictions) => res.json({ evictions }))
 })
