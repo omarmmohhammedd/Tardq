@@ -121,7 +121,7 @@ exports.confirmPayment = asyncHandler(async (req, res, next) => {
 // Get All Messages To User
 exports.getAllMessages = asyncHandler(async (req, res, next) => {
     const { id } = req.user
-    const messages = await Message.find({ $or: [{ from: id }, { to: id }] }).populate({ path: "from to ", select: "username email phone" })
+    const messages = await Message.find({ $or: [{ from: id }, { to: id }] }).populate({ path: "from to ", select: "username email phone active" })
     const allConversations = []
     let strictUsers = []
     messages.map((message) => {
