@@ -36,8 +36,9 @@ exports.makeOrder = asyncHandler(async (req, res, next) => {
 // Client Make Delivery
 exports.makeDelivery = asyncHandler(async (req, res, next) => {
     const { id } = req.user
-    const { username, source_location, dis_location, price, eviction_size, phone } = req.body
-    await Delivery.create({ user: id, username, source_location, dis_location, price, phone, eviction_size })
+    const { username, source_location, dis_location, price, eviction_size } = req.body
+    const user = await User.findById(id)
+    await Delivery.create({ user: id, username, source_location, dis_location, price, phone: user.phone, eviction_size })
         .then((delivery) => res.status(201).json({ delivery })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 

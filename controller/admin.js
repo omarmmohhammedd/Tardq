@@ -27,16 +27,14 @@ exports.addRule = asyncHandler(async (req, res, next) => {
             if (rule) await Rules.findOneAndUpdate({ type }, { textBody }).then((uses) => res.json(uses))
             else await Rules.create({ textBody, type }).then((uses) => res.json(uses))
         })
-    }
-    else if (type === 'main_img') {
+    } else if (type === 'main_img') {
         const main_img = req.file && (await cloudinary.uploader.upload(req.file.path)).secure_url
         if (!main_img) return next(new ApiError("Please Add a main_img", 400))
         await Rules.findOne({ type }).then(async (rule) => {
             if (rule) await Rules.findOneAndUpdate({ type }, { main_img }).then((main_img) => res.json(main_img))
             else await Rules.create({ main_img, type }).then((main_img) => res.json(main_img))
         })
-    }
-    else if (type === 'main_logo') {
+    } else if (type === 'main_logo') {
         const main_logo = req.file && (await cloudinary.uploader.upload(req.file.path)).secure_url
         if (!main_logo) return next(new ApiError("Please Add a main_logo", 400))
         await Rules.findOne({ type }).then(async (rule) => {
@@ -76,15 +74,14 @@ exports.addRule = asyncHandler(async (req, res, next) => {
                 return next(new ApiError(err.message, 401))
             })
         }
-    }
-    else if (type === "Bank") {
+    } else if (type === "Bank") {
         const { IBAN } = req.body
         if (!IBAN) return next(new ApiError("IBAN Required", 400))
         await Rules.findOne({ type }).then(async (rule) => {
-            if (rule) await Rules.findOneAndUpdate({ type }, { IBAN }).then(Bank => res.json({Bank}))
-            else await Rules.create({ IBAN, type }).then(Bank => res.json({Bank}))
+            if (rule) await Rules.findOneAndUpdate({ type }, { IBAN }).then(Bank => res.json({ Bank }))
+            else await Rules.create({ IBAN, type }).then(Bank => res.json({ Bank }))
         })
-        
+
     }
 }
 )
@@ -101,9 +98,5 @@ exports.activePayment = asyncHandler(async (req, res, next) => {
             await Rules.updateMany({ mode: "sandbox" }, { active: "false" })
             await Rules.findByIdAndUpdate(payment_id, { active: true }).then(() => res.sendStatus(200))
         }
-
     })
 })
-
-
-
