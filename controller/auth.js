@@ -3,7 +3,8 @@ const User = require("../model/User");
 const ApiError = require("../utils/apiError");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const eviction = require("../model/Eviction")
+const Delivery = require("../model/Delivery")
 
 
 // User Login 
