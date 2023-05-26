@@ -7,14 +7,29 @@ const Delivery = require("../model/Delivery")
 const Rules = require("../model/Rules")
 const User = require("../model/User")
 const Message = require("../model/Messages")
+const cloudinary = require("cloudinary").v2
 
+
+// Cloudinay Config Adapt
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
 
 // Client Make Eviction
 exports.makeOrder = asyncHandler(async (req, res, next) => {
     const { eviction_name, username, source_location, dis_location, price, arrival_time, type_eviction, phone, eviction_size } = req.body
     const { id } = req.user
-    const images = req.files.map(image => image.path)
-    await eviction.create({ user: id, eviction_name, username, source_location, dis_location, price, arrival_time, type_eviction, phone: phone && phone, eviction_size, eviction_imgs: images })
+    let imgs_path = []
+    if (req.files) {
+        imgs_path = await Promise.all(req.files.map(async img => {
+            const uploadImg = await cloudinary.uploader.upload(img.path);
+            return uploadImg.secure_url;
+        }));
+    }
+    await eviction.create({ user: id, eviction_name, username, source_location, dis_location, price, arrival_time, type_eviction, phone: phone && phone, eviction_size, eviction_imgs: imgs_path })
         .then((order) => res.status(201).json({ order })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 

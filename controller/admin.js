@@ -5,6 +5,17 @@ const Delivery = require("../model/Delivery")
 const Rules = require("../model/Rules")
 const axios = require("axios");
 const ApiError = require('../utils/apiError');
+const cloudinary = require("cloudinary").v2
+
+
+// Cloudinay Config Adapt
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
+
 
 // Add Rule
 exports.addRule = asyncHandler(async (req, res, next) => {
@@ -18,7 +29,7 @@ exports.addRule = asyncHandler(async (req, res, next) => {
         })
     }
     else if (type === 'main_img') {
-        const main_img = req.file && req.file.path
+        const main_img = req.file && (await cloudinary.uploader.upload(req.file.path)).secure_url
         if (!main_img) return next(new ApiError("Please Add a main_img", 400))
         await Rules.findOne({ type }).then(async (rule) => {
             if (rule) await Rules.findOneAndUpdate({ type }, { main_img }).then((main_img) => res.json(main_img))
@@ -26,7 +37,7 @@ exports.addRule = asyncHandler(async (req, res, next) => {
         })
     }
     else if (type === 'main_logo') {
-        const main_logo = req.file && req.file.path
+        const main_logo = req.file && (await cloudinary.uploader.upload(req.file.path)).secure_url
         if (!main_logo) return next(new ApiError("Please Add a main_logo", 400))
         await Rules.findOne({ type }).then(async (rule) => {
             if (rule) await Rules.findOneAndUpdate({ type }, { main_logo }).then((main_img) => res.json(main_img))
