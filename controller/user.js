@@ -42,10 +42,8 @@ exports.makeDelivery = asyncHandler(async (req, res, next) => {
         .then((delivery) => res.status(201).json({ delivery })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
 
-// Get All Rules
-exports.get_rules = asyncHandler(async (req, res, next) => {
-    await Rules.find({}).then((rules) => res.json({ rules }))
-})
+
+
 
 // User Pay Commission
 exports.pay = asyncHandler(async (req, res, next) => {

@@ -50,7 +50,6 @@ io.on("connection", async (socket) => {
     })
     socket.on('disconnect', async () => {
         userSockets.delete(id)
-        console.log(id)
         await User.findByIdAndUpdate(id, { active: false })
         console.log("user disconnected")
     })

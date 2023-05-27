@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { makeOrder,  makeDelivery, get_rules, pay, getAllMessages, confirmPayment } = require("../controller/user")
+const { makeOrder,  makeDelivery, pay, getAllMessages, confirmPayment } = require("../controller/user")
 const imgUploader = require("../middlewares/imgUploader.js")
 const { makeOrderValidation, makeDeliveryValidation, payValidator, confirmPaymentValidator } = require("../utils/user.js")
 
@@ -12,8 +12,7 @@ router.post("/order", imgUploader.array("order_photo", 6), makeOrderValidation, 
 //// Make Delivery
 router.post("/delivery", makeDeliveryValidation, makeDelivery)
 
-// Get All Rules
-router.get("/rules", get_rules)
+
 
 // Pay With Paypal
 router.post("/pay", payValidator, pay)

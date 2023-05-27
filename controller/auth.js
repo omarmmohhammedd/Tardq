@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const eviction = require("../model/Eviction")
 const Delivery = require("../model/Delivery")
-
+const Rules = require("../model/Rules")
 
 // User Login 
 exports.Login = asyncHandler(async (req, res, next) => {
@@ -37,7 +37,6 @@ exports.Register = asyncHandler(async (req, res, next) => {
     })
 })
 
-
 // All Evictions And Deliveries
 
 // All Evictions
@@ -52,6 +51,7 @@ exports.getDelivery = asyncHandler(async (req, res, next) => {
     res.json({ delivery: await Delivery.find({}).populate({ path: "user", "select": "username email phone" }) })
 })
 
+// Search Eviction
 exports.searchEviction = asyncHandler(async (req, res, next) => {
     const { search } = req.query // User input for searching
     await eviction.find()
@@ -61,4 +61,9 @@ exports.searchEviction = asyncHandler(async (req, res, next) => {
             { dis_location: { $regex: search, $options: 'i' } }, // Search by dis location
             { source_location: { $regex: search, $options: 'i' } }
         ]).then((evictions) => res.json({ evictions }))
+})
+
+// Get All Rules
+exports.get_rules = asyncHandler(async (req, res, next) => {
+    await Rules.find({}).then((rules) => res.json({ rules }))
 })

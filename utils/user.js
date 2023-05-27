@@ -20,7 +20,6 @@ exports.makeDeliveryValidation = [
     check("username").isLength({ min: 3 }).withMessage("Please Enter Your Username"),
     check("source_location").notEmpty().withMessage("Please Enter Your Source Location"),
     check("dis_location").notEmpty().withMessage("Please Enter Your Dis Location"),
-    check("price").notEmpty().withMessage("Please Enter Your Price"),
     check("phone").optional().isMobilePhone().withMessage("Please Enter Your Eviction Type"),
     check("eviction_size").isLength({ min: 3 }).withMessage("Please Enter Your Eviction Size"),
     validator
