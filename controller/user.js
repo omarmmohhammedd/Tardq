@@ -11,7 +11,6 @@ const cloudinary = require("cloudinary").v2
 const paymentModel = require("../model/Payments")
 
 // Cloudinay Config Adapt
-
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY,
@@ -41,9 +40,6 @@ exports.makeDelivery = asyncHandler(async (req, res, next) => {
     await Delivery.create({ user: id, username, source_location, dis_location, price, phone: user.phone, eviction_size })
         .then((delivery) => res.status(201).json({ delivery })).catch((error) => next(new ApiError(error.message, error.statusCode)))
 })
-
-
-
 
 // User Pay Commission
 exports.pay = asyncHandler(async (req, res, next) => {
