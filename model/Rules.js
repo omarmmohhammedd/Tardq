@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 module.exports = mongoose.model("Rules", new mongoose.Schema({
     type: {
         type: String,
-        enum: ['uses', 'privacy', "main_img", "main_logo", "payment","commission","Bank"]
+        enum: ['uses', 'privacy', "main_img", "main_logo", "payment","commission","Bank","whatsapp","instagram","facebook"]
     },
     textBody: String,
     main_img: String,
@@ -17,5 +17,8 @@ module.exports = mongoose.model("Rules", new mongoose.Schema({
     clientSecert: String,
     mode: String,
     active: Boolean,
-    IBAN:String
+    IBAN: String,
+    whatsapp: String,
+    instagram: String,
+    facebook:String
 }))

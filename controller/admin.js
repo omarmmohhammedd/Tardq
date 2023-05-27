@@ -82,6 +82,27 @@ exports.addRule = asyncHandler(async (req, res, next) => {
             else await Rules.create({ IBAN, type }).then(Bank => res.json({ Bank }))
         })
 
+    } else if (type === "whatsapp") {
+        const { whatsapp } = req.body
+        if (!whatsapp) return next(new ApiError("Whatsapp Required",400))
+        await Rules.findOne({ type }).then(async (rule) => {
+            if (rule) await Rules.findOneAndUpdate({ type }, { whatsapp }).then(whatsapp => res.json({ whatsapp }))
+            else await Rules.create({ whatsapp, type }).then(whatsapp => res.json({ whatsapp }))
+        })
+    } else if (type === "instagram") {
+        const { instagram } = req.body
+        if (!instagram) return next(new ApiError("Instagram Required", 400))
+        await Rules.findOne({ type }).then(async (rule) => {
+            if (rule) await Rules.findOneAndUpdate({ type }, { instagram }).then(instagram => res.json({ instagram }))
+            else await Rules.create({ instagram, type }).then(instagram => res.json({ instagram }))
+        })
+    } else if (type === "facebook") {
+        const { facebook } = req.body
+        if (!facebook) return next(new ApiError("Facebook Required", 400))
+        await Rules.findOne({ type }).then(async (rule) => {
+            if (rule) await Rules.findOneAndUpdate({ type }, { facebook }).then(facebook => res.json({ facebook }))
+            else await Rules.create({ facebook, type }).then(facebook => res.json({ facebook }))
+        })
     }
 }
 )
