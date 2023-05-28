@@ -12,8 +12,6 @@ router.post("/order", imgUploader.array("order_photo", 6), makeOrderValidation, 
 //// Make Delivery
 router.post("/delivery", makeDeliveryValidation, makeDelivery)
 
-
-
 // Pay With Paypal
 router.post("/pay", payValidator, pay)
 

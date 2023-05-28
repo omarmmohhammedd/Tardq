@@ -11,7 +11,7 @@ exports.makeOrderValidation = [
     check("arrival_time").notEmpty().withMessage("Please Enter Your Arrival Time"),
     check("type_eviction").isLength({ min: 3 }).withMessage("Please Enter Your Eviction Type"),
     check("price").notEmpty().withMessage("Please Enter Your Price"),
-    check("phone").optional().isMobilePhone().withMessage("Please Enter Vaild Phone Number"),
+    check("phone").optional().withMessage("Please Enter Vaild Phone Number"),
     check("eviction_size").isLength({ min: 3 }).withMessage("Please Enter Your Eviction Size"),
     validator
 ]
@@ -20,7 +20,7 @@ exports.makeDeliveryValidation = [
     check("username").isLength({ min: 3 }).withMessage("Please Enter Your Username"),
     check("source_location").notEmpty().withMessage("Please Enter Your Source Location"),
     check("dis_location").notEmpty().withMessage("Please Enter Your Dis Location"),
-    check("phone").optional().isMobilePhone().withMessage("Please Enter Your Eviction Type"),
+    check("phone").optional().withMessage("Please Enter Your Eviction Type"),
     check("eviction_size").isLength({ min: 3 }).withMessage("Please Enter Your Eviction Size"),
     validator
 ]

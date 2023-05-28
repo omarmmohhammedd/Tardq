@@ -12,9 +12,8 @@ router.post("/register", RegisterValidator, Register)
 router.get("/delivery", getDelivery)
 // Get All Orders
 router.get("/order", getOrders)
-
+// Evication Search
 router.get("/search", [check("search").notEmpty().withMessage("Please Add Search Input"), validator], searchEviction)
-
 // Get All Rules
 router.get("/rules", get_rules)
 module.exports = router

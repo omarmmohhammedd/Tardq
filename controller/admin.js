@@ -15,7 +15,6 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET,
 });
 
-
 // Add Rule
 exports.addRule = asyncHandler(async (req, res, next) => {
     const { type } = req.query
@@ -102,10 +101,10 @@ exports.addRule = asyncHandler(async (req, res, next) => {
             if (rule) await Rules.findOneAndUpdate({ type }, { facebook }).then(facebook => res.json({ facebook }))
             else await Rules.create({ facebook, type }).then(facebook => res.json({ facebook }))
         })
-    }
+    }else return next(new ApiError("Invalid Type To Be Modify",403))
 }
 )
-
+ 
 // Payment Activate With Paypal
 exports.activePayment = asyncHandler(async (req, res, next) => {
     const { payment_id } = req.params
